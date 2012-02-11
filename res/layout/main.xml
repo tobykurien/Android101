@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/main_list_view"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:entries="@android:array/imProtocols" 
+        android:layout_weight="1">
+        <!-- Preview: listitem=@layout/mail_list_item -->
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onRefresh"
+            android:text="@string/btn_refresh" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="onExit"
+            android:text="@string/btn_exit" />
+    </LinearLayout>
+
+</LinearLayout>
