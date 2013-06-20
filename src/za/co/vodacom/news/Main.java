@@ -4,11 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import za.co.vodacom.news.adapter.TweetAdapter;
@@ -37,6 +35,10 @@ public class Main extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
+		loadTweets();
+	}
+
+	private void loadTweets() {
 		pd = new ProgressDialog(this);
 		pd.setMessage("Loading..."); // extern this string
 		pd.show();
@@ -48,8 +50,8 @@ public class Main extends Activity {
 				String jsonData;
 				Tweet[] data;
 				try {
-					jsonData = getData("https://api.twitter.com/1/statuses/user_timeline/vodacom.json");
-					
+					jsonData = getData("http://aws1.tobykurien.com/twitter/vodacom.json");
+
 					JSONArray entries = new JSONArray(jsonData);
 					data = new Tweet[entries.length()];
 					for (int i = 0; i < entries.length(); i++) {
@@ -61,7 +63,8 @@ public class Main extends Activity {
 				} catch (final Exception e) {
 					handler.post(new Runnable() {
 						public void run() {
-							Toast.makeText(Main.this, "ERROR: " + e.getMessage(),
+							Toast.makeText(Main.this,
+									"ERROR: " + e.getMessage(),
 									Toast.LENGTH_LONG).show();
 						}
 					});
@@ -87,7 +90,7 @@ public class Main extends Activity {
 	}
 
 	public void onRefresh(View v) {
-
+		loadTweets();
 	}
 
 	public void onExit(View v) {
