@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,6 +22,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -51,7 +54,7 @@ public class Main extends Activity {
 				NewsItem[] data;
 				try {
 					// see https://developers.google.com/news-search/v1/jsondevguide#json_reference
-					String url = "https://ajax.googleapis.com/ajax/services/search/news?q=johannesburg&v=1.0&ned=en_za&rsz=8";
+					String url = "https://ajax.googleapis.com/ajax/services/search/news?t=n&q=south%10africa&v=1.0&ned=en_za&rsz=8";
 					jsonData = getData(url);
 
 					JSONArray entries = new JSONObject(jsonData)
@@ -65,7 +68,7 @@ public class Main extends Activity {
 						data[i].setDate(post.getString("publishedDate"));
 						data[i].setPublisher(post.getString("publisher"));
 						data[i].setContent(post.getString("content"));
-						data[i].setUrl(post.getString("url"));
+						data[i].setUrl(URLDecoder.decode(post.getString("url")));
 					}
 				} catch (final Exception e) {
 					handler.post(new Runnable() {
@@ -87,6 +90,18 @@ public class Main extends Activity {
 					NewsAdapter adapter = new NewsAdapter(Main.this, newsItems);
 					ListView lv = (ListView) findViewById(R.id.main_list_view);
 					lv.setAdapter(adapter);
+					
+					// Allow user to click to read article
+					lv.setOnItemClickListener(new OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> adapter, View view,
+								int row, long id) {
+							NewsItem item = (NewsItem) adapter.getItemAtPosition(row);
+							Uri uri = Uri.parse(item.getUrl());
+							Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+							startActivity(intent);
+						}
+					});
 				}
 
 				pd.dismiss();
