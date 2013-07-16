@@ -12,7 +12,6 @@ import org.json.JSONObject;
 
 import za.co.vodacom.news.adapter.NewsAdapter;
 import za.co.vodacom.news.data.NewsItem;
-import za.co.vodacom.news.data.Tweet;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -22,8 +21,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -53,13 +52,13 @@ public class Main extends Activity {
 				String jsonData;
 				NewsItem[] data;
 				try {
-					// see https://developers.google.com/news-search/v1/jsondevguide#json_reference
+					// see
+					// https://developers.google.com/news-search/v1/jsondevguide#json_reference
 					String url = "https://ajax.googleapis.com/ajax/services/search/news?t=n&q=south%10africa&v=1.0&ned=en_za&rsz=8";
 					jsonData = getData(url);
 
-					JSONArray entries = new JSONObject(jsonData)
-						.getJSONObject("responseData")
-						.getJSONArray("results");
+					JSONArray entries = new JSONObject(jsonData).getJSONObject(
+							"responseData").getJSONArray("results");
 					data = new NewsItem[entries.length()];
 					for (int i = 0; i < entries.length(); i++) {
 						JSONObject post = entries.getJSONObject(i);
@@ -88,15 +87,16 @@ public class Main extends Activity {
 			protected void onPostExecute(NewsItem[] newsItems) {
 				if (newsItems != null) {
 					NewsAdapter adapter = new NewsAdapter(Main.this, newsItems);
-					ListView lv = (ListView) findViewById(R.id.main_list_view);
+					ListView lv = (ListView) findViewById(R.id.news_list);
 					lv.setAdapter(adapter);
-					
+
 					// Allow user to click to read article
 					lv.setOnItemClickListener(new OnItemClickListener() {
 						@Override
-						public void onItemClick(AdapterView<?> adapter, View view,
-								int row, long id) {
-							NewsItem item = (NewsItem) adapter.getItemAtPosition(row);
+						public void onItemClick(AdapterView<?> adapter,
+								View view, int row, long id) {
+							NewsItem item = (NewsItem) adapter
+									.getItemAtPosition(row);
 							Uri uri = Uri.parse(item.getUrl());
 							Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 							startActivity(intent);
@@ -156,30 +156,5 @@ public class Main extends Activity {
 
 		if (Debug.BUTTON_TEST)
 			Log.d(Main.LOG_TAG, "intent sent");
-	}
-
-	public Tweet[] getTweetTest() {
-		Tweet[] tweets = new Tweet[20];
-		for (int i = 0; i < 20; i++) {
-			if (i == 10)
-				handler.post(new Runnable() {
-					public void run() {
-						Toast.makeText(Main.this, "test", Toast.LENGTH_LONG)
-								.show();
-					}
-				});
-
-			Tweet t = new Tweet();
-			t.setTweet("This is tweet number " + i);
-			t.setDate("01/02/2012");
-			tweets[i] = t;
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return tweets;
 	}
 }
