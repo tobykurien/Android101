@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, VodacomNewsActivity!</string>
-    <string name="app_name">VodacomNews</string>
+    <string name="app_name">ZA News</string>
     <string name="btn_refresh">Refresh</string>
     <string name="btn_exit">Exit</string>
     

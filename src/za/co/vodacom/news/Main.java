@@ -9,7 +9,8 @@ import java.net.URL;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import za.co.vodacom.news.adapter.TweetAdapter;
+import za.co.vodacom.news.adapter.NewsAdapter;
+import za.co.vodacom.news.data.NewsItem;
 import za.co.vodacom.news.data.Tweet;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -24,7 +25,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 public class Main extends Activity {
-	public static final String LOG_TAG = "Vodacom";
+	public static final String LOG_TAG = "News";
 
 	Handler handler = new Handler();
 	ProgressDialog pd;
@@ -43,22 +44,28 @@ public class Main extends Activity {
 		pd.setMessage("Loading..."); // extern this string
 		pd.show();
 
-		AsyncTask<Void, Void, Tweet[]> task = new AsyncTask<Void, Void, Tweet[]>() {
+		AsyncTask<Void, Void, NewsItem[]> task = new AsyncTask<Void, Void, NewsItem[]>() {
 			@Override
-			protected Tweet[] doInBackground(Void... params) {
-				// getTweetsTest()
+			protected NewsItem[] doInBackground(Void... params) {
 				String jsonData;
-				Tweet[] data;
+				NewsItem[] data;
 				try {
-					jsonData = getData("http://aws1.tobykurien.com/twitter/vodacom.json");
+					// see https://developers.google.com/news-search/v1/jsondevguide#json_reference
+					String url = "https://ajax.googleapis.com/ajax/services/search/news?q=johannesburg&v=1.0&ned=en_za&rsz=8";
+					jsonData = getData(url);
 
-					JSONArray entries = new JSONArray(jsonData);
-					data = new Tweet[entries.length()];
+					JSONArray entries = new JSONObject(jsonData)
+						.getJSONObject("responseData")
+						.getJSONArray("results");
+					data = new NewsItem[entries.length()];
 					for (int i = 0; i < entries.length(); i++) {
 						JSONObject post = entries.getJSONObject(i);
-						data[i] = new Tweet();
-						data[i].setTweet(post.getString("text"));
-						data[i].setDate(post.getString("created_at"));
+						data[i] = new NewsItem();
+						data[i].setTitle(post.getString("title"));
+						data[i].setDate(post.getString("publishedDate"));
+						data[i].setPublisher(post.getString("publisher"));
+						data[i].setContent(post.getString("content"));
+						data[i].setUrl(post.getString("url"));
 					}
 				} catch (final Exception e) {
 					handler.post(new Runnable() {
@@ -75,9 +82,9 @@ public class Main extends Activity {
 			}
 
 			@Override
-			protected void onPostExecute(Tweet[] tweets) {
-				if (tweets != null) {
-					TweetAdapter adapter = new TweetAdapter(Main.this, tweets);
+			protected void onPostExecute(NewsItem[] newsItems) {
+				if (newsItems != null) {
+					NewsAdapter adapter = new NewsAdapter(Main.this, newsItems);
 					ListView lv = (ListView) findViewById(R.id.main_list_view);
 					lv.setAdapter(adapter);
 				}
